@@ -1,0 +1,28 @@
+name: CI
+
+on: [push]
+
+jobs:
+ sast_scan:
+   name: Run Bandit Scan
+   runs-on: ubuntu-22.04
+
+   steps:
+   - name: Checkout code
+     uses: actions/checkout@v4.2.2
+
+   - name: Set up Python
+     uses: actions/setup-python@v5.4.0
+
+   - name: Install Bandit
+     run: pip install bandit
+
+   - name: Run Bandit Scan
+     run: bandit -ll -ii -r . -f json -o bandit-report.json
+
+   - name: Upload Artifact
+     uses: actions/upload-artifact@v4.6.1
+     if: always()
+     with:
+      name: bandit-findings
+      path: bandit-report.json
